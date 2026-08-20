@@ -1,998 +1,883 @@
-document.addEventListener("DOMContentLoaded", function () {
+const capital = document.getElementById("capital");
+const taxa = document.getElementById("taxa");
+const tempo = document.getElementById("tempo");
+const juros = document.getElementById("juros");
+const montante = document.getElementById("montante");
+
+const calcular = document.getElementById("calcular");
+const limpar = document.getElementById("limpar");
+
+const simples = document.getElementById("simples");
+const compostos = document.getElementById("compostos");
 
 
-    // =====================================================
-    // CAMPOS DA CALCULADORA
-    // =====================================================
+// =====================================================
+// PRECISÃƒO INTERNA
+// =====================================================
 
-    const capital = document.getElementById("capital");
-    const taxa = document.getElementById("taxa");
-    const tempo = document.getElementById("tempo");
-    const juros = document.getElementById("juros");
-    const montante = document.getElementById("montante");
+// Guarda o Ãºltimo resultado completo calculado.
+// O valor mostrado na tela pode estar arredondado,
+// mas o cÃ¡lculo seguinte pode usar o valor completo.
 
-    const calcular = document.getElementById("calcular");
-    const limpar = document.getElementById("limpar");
+let memoria = {
+    capital: null,
+    taxa: null,
+    tempo: null,
+    juros: null,
+    montante: null
+};
 
-    const simples = document.getElementById("simples");
-    const compostos = document.getElementById("compostos");
+
+// =====================================================
+// FUNÃ‡ÃƒO PARA MOSTRAR RESULTADOS
+// =====================================================
+
+function arredondar(valor) {
+    return Number(valor.toFixed(2));
+}
 
 
-    function vazio(campo) {
-        return campo.value === "";
+// =====================================================
+// FUNÃ‡ÃƒO PARA IDENTIFICAR VALORES
+// =====================================================
+
+function numero(campo) {
+
+    if (campo.value === "") {
+        return null;
     }
 
+    return Number(campo.value);
+}
 
-    // =====================================================
-    // LIMPAR CALCULADORA
-    // =====================================================
 
-    limpar.addEventListener("click", function () {
+// =====================================================
+// LIMPAR
+// =====================================================
 
-        capital.value = "";
-        taxa.value = "";
-        tempo.value = "";
-        juros.value = "";
-        montante.value = "";
+limpar.addEventListener("click", function () {
 
-    });
+    capital.value = "";
+    taxa.value = "";
+    tempo.value = "";
+    juros.value = "";
+    montante.value = "";
 
+    memoria.capital = null;
+    memoria.taxa = null;
+    memoria.tempo = null;
+    memoria.juros = null;
+    memoria.montante = null;
 
-    // =====================================================
-    // CALCULADORA
-    // =====================================================
+});
 
-    calcular.addEventListener("click", function () {
 
+// =====================================================
+// CALCULAR
+// =====================================================
 
-        // =================================================
-        // JUROS SIMPLES
-        // =================================================
+calcular.addEventListener("click", function () {
 
-        if (simples.checked) {
+    const cCampo = numero(capital);
+    const iCampo = numero(taxa);
+    const tCampo = numero(tempo);
+    const jCampo = numero(juros);
+    const mCampo = numero(montante);
 
-            let c = Number(capital.value);
-            let i = Number(taxa.value) / 100;
-            let t = Number(tempo.value);
-            let j = Number(juros.value);
-            let m = Number(montante.value);
+// =================================================
+// ATUALIZA A MEMÃ“RIA
+// MantÃ©m a precisÃ£o completa dos resultados.
+// =================================================
 
+function atualizarMemoria(valorCampo, valorMemoria, novoValor) {
 
-            // Capital + Taxa + Tempo
-            if (
-                capital.value !== "" &&
-                taxa.value !== "" &&
-                tempo.value !== "" &&
-                vazio(juros)
-            ) {
-
-                j = c * i * t;
-                juros.value = j.toFixed(2);
-
-            }
-
-
-            // Capital + Taxa + Tempo
-            // calcula também montante
-            if (
-                capital.value !== "" &&
-                taxa.value !== "" &&
-                tempo.value !== "" &&
-                vazio(montante)
-            ) {
-
-                j = c * i * t;
-                m = c + j;
-
-                montante.value = m.toFixed(2);
-
-            }
-
-
-            // Montante = Capital + Juros
-            if (
-                vazio(montante) &&
-                capital.value !== "" &&
-                juros.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                j = Number(juros.value);
-
-                montante.value = (c + j).toFixed(2);
-
-            }
-
-
-            // Juros = Montante - Capital
-            if (
-                vazio(juros) &&
-                capital.value !== "" &&
-                montante.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                m = Number(montante.value);
-
-                juros.value = (m - c).toFixed(2);
-
-            }
-
-
-            // Tempo
-            if (
-                vazio(tempo) &&
-                capital.value !== "" &&
-                taxa.value !== "" &&
-                juros.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                i = Number(taxa.value) / 100;
-                j = Number(juros.value);
-
-                if (c !== 0 && i !== 0) {
-
-                    t = j / (c * i);
-
-                    tempo.value = t.toFixed(2);
-
-                }
-
-            }
-
-
-            // Taxa
-            if (
-                vazio(taxa) &&
-                capital.value !== "" &&
-                tempo.value !== "" &&
-                juros.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                t = Number(tempo.value);
-                j = Number(juros.value);
-
-                if (c !== 0 && t !== 0) {
-
-                    i = j / (c * t);
-
-                    taxa.value = (i * 100).toFixed(2);
-
-                }
-
-            }
-
-
-            // Capital
-            if (
-                vazio(capital) &&
-                taxa.value !== "" &&
-                tempo.value !== "" &&
-                juros.value !== ""
-            ) {
-
-                i = Number(taxa.value) / 100;
-                t = Number(tempo.value);
-                j = Number(juros.value);
-
-                if (i !== 0 && t !== 0) {
-
-                    c = j / (i * t);
-
-                    capital.value = c.toFixed(2);
-
-                }
-
-            }
-
-
-            // Capital pelo montante
-            if (
-                vazio(capital) &&
-                taxa.value !== "" &&
-                tempo.value !== "" &&
-                montante.value !== ""
-            ) {
-
-                i = Number(taxa.value) / 100;
-                t = Number(tempo.value);
-                m = Number(montante.value);
-
-                c = m / (1 + i * t);
-
-                capital.value = c.toFixed(2);
-
-            }
-
-        }
-
-
-        // =================================================
-        // JUROS COMPOSTOS
-        // =================================================
-
-        if (compostos.checked) {
-
-            let c = Number(capital.value);
-            let i = Number(taxa.value) / 100;
-            let t = Number(tempo.value);
-            let j = Number(juros.value);
-            let m = Number(montante.value);
-
-
-            // Capital + Taxa + Tempo
-            if (
-                capital.value !== "" &&
-                taxa.value !== "" &&
-                tempo.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                i = Number(taxa.value) / 100;
-                t = Number(tempo.value);
-
-                m = c * Math.pow(1 + i, t);
-
-                if (vazio(montante)) {
-
-                    montante.value = m.toFixed(2);
-
-                }
-
-                if (vazio(juros)) {
-
-                    j = m - c;
-
-                    juros.value = j.toFixed(2);
-
-                }
-
-            }
-
-
-            // Juros pelo montante
-            if (
-                vazio(juros) &&
-                capital.value !== "" &&
-                montante.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                m = Number(montante.value);
-
-                j = m - c;
-
-                juros.value = j.toFixed(2);
-
-            }
-
-
-            // Montante pelo capital + juros
-            if (
-                vazio(montante) &&
-                capital.value !== "" &&
-                juros.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                j = Number(juros.value);
-
-                m = c + j;
-
-                montante.value = m.toFixed(2);
-
-            }
-
-
-            // Capital pelo montante
-            if (
-                vazio(capital) &&
-                montante.value !== "" &&
-                taxa.value !== "" &&
-                tempo.value !== ""
-            ) {
-
-                m = Number(montante.value);
-                i = Number(taxa.value) / 100;
-                t = Number(tempo.value);
-
-                c = m / Math.pow(1 + i, t);
-
-                capital.value = c.toFixed(2);
-
-            }
-
-
-            // Capital pelos juros
-            if (
-                vazio(capital) &&
-                juros.value !== "" &&
-                taxa.value !== "" &&
-                tempo.value !== ""
-            ) {
-
-                j = Number(juros.value);
-                i = Number(taxa.value) / 100;
-                t = Number(tempo.value);
-
-                let divisor =
-                    Math.pow(1 + i, t) - 1;
-
-                if (divisor !== 0) {
-
-                    c = j / divisor;
-
-                    capital.value = c.toFixed(2);
-
-                }
-
-            }
-
-
-            // Taxa
-            if (
-                vazio(taxa) &&
-                capital.value !== "" &&
-                montante.value !== "" &&
-                tempo.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                m = Number(montante.value);
-                t = Number(tempo.value);
-
-                if (c !== 0 && t !== 0) {
-
-                    i = Math.pow(m / c, 1 / t) - 1;
-
-                    taxa.value = (i * 100).toFixed(2);
-
-                }
-
-            }
-
-
-            // Tempo
-            if (
-                vazio(tempo) &&
-                capital.value !== "" &&
-                montante.value !== "" &&
-                taxa.value !== ""
-            ) {
-
-                c = Number(capital.value);
-                m = Number(montante.value);
-                i = Number(taxa.value) / 100;
-
-                if (
-                    c !== 0 &&
-                    i !== 0 &&
-                    m > 0 &&
-                    c > 0
-                ) {
-
-                    t =
-                        Math.log(m / c) /
-                        Math.log(1 + i);
-
-                    tempo.value = t.toFixed(2);
-
-                }
-
-            }
-
-        }
-
-    });
-
-
-    // =====================================================
-    // AJUDA DOS CAMPOS
-    // =====================================================
-
-    document.getElementById("labelCapital").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "CAPITAL\n\n" +
-                "É o valor inicial de uma aplicação ou empréstimo.\n\n" +
-                "Exemplo: se você aplicar R$ 600,00, o capital é R$ 600,00."
-            );
-
-        }
-    );
-
-
-    document.getElementById("labelTaxa").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "TAXA DE JUROS\n\n" +
-                "É a porcentagem usada para calcular os juros.\n\n" +
-                "Exemplo: uma taxa de 2% ao mês significa que a cada mês os juros são calculados usando 2%."
-            );
-
-        }
-    );
-
-
-    document.getElementById("labelTempo").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "TEMPO\n\n" +
-                "É o período durante o qual o dinheiro fica aplicado ou emprestado.\n\n" +
-                "Pode ser contado em meses, anos, dias ou outro período definido na questão."
-            );
-
-        }
-    );
-
-
-    document.getElementById("labelJuros").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "JUROS\n\n" +
-                "É o valor que representa o ganho ou o custo gerado pelo dinheiro durante o período da aplicação ou empréstimo.\n\n" +
-                "Exemplo: se você aplicou R$ 600,00 e recebeu R$ 60,00 de juros, o valor dos juros é R$ 60,00."
-            );
-
-        }
-    );
-
-
-    document.getElementById("labelMontante").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "MONTANTE\n\n" +
-                "É o valor total obtido ao final da aplicação ou empréstimo.\n\n" +
-                "O montante é formado pelo Capital + Juros."
-            );
-
-        }
-    );
-
-
-    // =====================================================
-    // AJUDA JUROS SIMPLES
-    // =====================================================
-
-    simples.addEventListener("click", function () {
-
-        alert(
-            "JUROS SIMPLES\n\n" +
-            "Nos juros simples, os juros são calculados sempre sobre o capital inicial."
-        );
-
-    });
-
-
-    // =====================================================
-    // AJUDA JUROS COMPOSTOS
-    // =====================================================
-
-    compostos.addEventListener("click", function () {
-
-        alert(
-            "JUROS COMPOSTOS\n\n" +
-            "Nos juros compostos, os juros de cada período são incorporados ao valor acumulado.\n\n" +
-            "É o famoso sistema de juros sobre juros."
-        );
-
-    });
-
-
-    // =====================================================
-    // INFORMAÇÕES
-    // =====================================================
-
-    document.getElementById("info").addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "AJUDA NAS FINANÇAS\n\n" +
-                "Como usar a calculadora:\n\n" +
-                "1. Escolha entre Juros Simples ou Juros Compostos.\n\n" +
-                "2. Digite os valores que você já conhece.\n\n" +
-                "3. Deixe vazio o valor que deseja descobrir.\n\n" +
-                "4. Clique em CALCULAR.\n\n" +
-                "A calculadora pode descobrir Capital, Taxa, Tempo, Juros ou Montante."
-            );
-
-        }
-    );
-
-
-    // =====================================================
-    // QUESTIONÁRIO
-    // =====================================================
-
-    const botaoQuestoes =
-        document.getElementById("questoes");
-
-    const areaQuestionario =
-        document.getElementById("areaQuestionario");
-
-    const todasQuestoes =
-        document.querySelectorAll(".questao");
-
-    const numeroQuestao =
-        document.getElementById("numeroQuestao");
-
-    const resultadoFinal =
-        document.getElementById("resultadoFinal");
-
-    const textoResultadoFinal =
-        document.getElementById("textoResultadoFinal");
-
-    const mensagemFinal =
-        document.getElementById("mensagemFinal");
-
-    const reiniciarQuestionario =
-        document.getElementById("reiniciarQuestionario");
-
-
-    // =====================================================
-    // RESPOSTAS CORRETAS
-    // =====================================================
-
-    const respostasCorretas = {
-
-        1: "b",
-        2: "b",
-        3: "b",
-        4: "b",
-        5: "b",
-        6: "b",
-        7: "b",
-        8: "b",
-        9: "b",
-        10: "c"
-
-    };
-
-
-    // =====================================================
-    // MENSAGENS
-    // =====================================================
-
-    const mensagensCorretas = {
-
-        1: "Os juros são R$ 30,00.",
-
-        2: "O montante é R$ 1.040,40.",
-
-        3: "Os juros são R$ 96,00.",
-
-        4: "O montante é R$ 540,80.",
-
-        5: "Os juros são R$ 60,00.",
-
-        6: "O montante é R$ 1.060,90.",
-
-        7: "Os juros são R$ 100,00.",
-
-        8: "O montante é aproximadamente R$ 520,20.",
-
-        9: "O montante é R$ 440,00.",
-
-        10: "O montante é aproximadamente R$ 1.061,21."
-
-    };
-
-
-    // =====================================================
-    // CONTROLE
-    // =====================================================
-
-    let questaoAtual = 1;
-
-    let acertos = 0;
-
-    const primeiraResposta = new Set();
-
-
-    // =====================================================
-    // MOSTRAR QUESTÃO
-    // =====================================================
-
-    function mostrarQuestao(numero) {
-
-        todasQuestoes.forEach(function (questao) {
-
-            const numeroDaQuestao =
-                Number(questao.dataset.questao);
-
-            if (numeroDaQuestao === numero) {
-
-                questao.classList.add("ativa");
-
-            } else {
-
-                questao.classList.remove("ativa");
-
-            }
-
-        });
-
-
-        numeroQuestao.textContent = numero;
-
-
-        const questao =
-            document.querySelector(
-                '.questao[data-questao="' + numero + '"]'
-            );
-
-
-        if (questao) {
-
-            questao.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-        }
-
+    if (valorCampo === null) {
+        return valorMemoria;
     }
 
+    // Se o valor que estÃ¡ na tela Ã© exatamente o
+    // resultado arredondado anteriormente pelo programa,
+    // mantÃ©m o valor interno completo.
+    if (
+        valorMemoria !== null &&
+        valorCampo === arredondar(valorMemoria)
+    ) {
+        return valorMemoria;
+    }
 
-    // =====================================================
-    // VERIFICAR RESPOSTA
-    // =====================================================
-
-    function verificarResposta(numero) {
-
-        const resposta =
-            document.querySelector(
-                'input[name="q' + numero + '"]:checked'
-            );
-
-
-        const resultado =
-            document.getElementById(
-                "resultadoQ" + numero
-            );
+    return novoValor;
+}
 
 
-        const questao =
-            document.querySelector(
-                '.questao[data-questao="' + numero + '"]'
-            );
+memoria.capital =
+    atualizarMemoria(
+        cCampo,
+        memoria.capital,
+        cCampo
+    );
 
 
-        const botaoProxima =
-            questao.querySelector(".proximaQuestao");
+memoria.taxa =
+    atualizarMemoria(
+        iCampo,
+        memoria.taxa,
+        iCampo / 100
+    );
+
+
+memoria.tempo =
+    atualizarMemoria(
+        tCampo,
+        memoria.tempo,
+        tCampo
+    );
+
+
+memoria.juros =
+    atualizarMemoria(
+        jCampo,
+        memoria.juros,
+        jCampo
+    );
+
+
+memoria.montante =
+    atualizarMemoria(
+        mCampo,
+        memoria.montante,
+        mCampo
+    );
+
+
+    // =================================================
+    // JUROS SIMPLES
+    // =================================================
+
+    if (simples.checked) {
+
+        let c = memoria.capital;
+        let i = memoria.taxa;
+        let t = memoria.tempo;
+        let j = memoria.juros;
+        let m = memoria.montante;
 
 
         // ---------------------------------------------
-        // NENHUMA RESPOSTA
-        // ---------------------------------------------
-
-        if (!resposta) {
-
-            resultado.textContent =
-                "⚠️ Escolha uma alternativa.";
-
-            resultado.style.color = "#f44336";
-
-            return;
-
-        }
-
-
-        // ---------------------------------------------
-        // PRIMEIRA TENTATIVA
-        // ---------------------------------------------
-
-        if (!primeiraResposta.has(numero)) {
-
-            primeiraResposta.add(numero);
-
-            if (
-                resposta.value ===
-                respostasCorretas[numero]
-            ) {
-
-                acertos++;
-
-            }
-
-        }
-
-
-        // ---------------------------------------------
-        // RESPOSTA CORRETA
+        // C + i + t
+        // Descobrir J e M
         // ---------------------------------------------
 
         if (
-            resposta.value ===
-            respostasCorretas[numero]
+            cCampo !== null &&
+            iCampo !== null &&
+            tCampo !== null &&
+            jCampo === null &&
+            mCampo === null
         ) {
 
-            resultado.textContent =
-                "✅ Correto! " +
-                mensagensCorretas[numero];
+            j = c * i * t;
+            m = c + j;
 
-            resultado.style.color = "#2e7d32";
+            memoria.juros = j;
+            memoria.montante = m;
 
+            juros.value = arredondar(j);
+            montante.value = arredondar(m);
 
-            // Desabilita as alternativas
-            const alternativas =
-                document.querySelectorAll(
-                    'input[name="q' + numero + '"]'
-                );
-
-
-            alternativas.forEach(function (input) {
-
-                input.disabled = true;
-
-            });
-
-
-            // Esconde botão verificar
-            const botaoVerificar =
-                questao.querySelector(
-                    ".verificarQuestao"
-                );
-
-            botaoVerificar.style.display = "none";
-
-
-            // Mostra botão próxima
-            botaoProxima.style.display = "block";
-
+            return;
         }
 
 
         // ---------------------------------------------
-        // RESPOSTA ERRADA
+        // C + J + i + t
+        // Descobrir M
         // ---------------------------------------------
 
-        else {
+        if (
+            c !== null &&
+            j !== null &&
+            i !== null &&
+            t !== null &&
+            mCampo === null
+        ) {
 
-            resultado.textContent =
-                "❌ Ainda não. Tente novamente!";
+            m = c + j;
 
-            resultado.style.color = "#f44336";
+            memoria.montante = m;
 
+            montante.value = arredondar(m);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + M
+        // Descobrir J
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            m !== null &&
+            jCampo === null
+        ) {
+
+            j = m - c;
+
+            memoria.juros = j;
+
+            juros.value = arredondar(j);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // J + i + t
+        // Descobrir C e M
+        // ---------------------------------------------
+
+        if (
+            cCampo === null &&
+            j !== null &&
+            i !== null &&
+            t !== null
+        ) {
+
+            c = j / (i * t);
+            m = c + j;
+
+            memoria.capital = c;
+            memoria.montante = m;
+
+            capital.value = arredondar(c);
+            montante.value = arredondar(m);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + J + t
+        // Descobrir i e M
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            j !== null &&
+            t !== null &&
+            iCampo === null
+        ) {
+
+            i = j / (c * t);
+            m = c + j;
+
+            memoria.taxa = i;
+            memoria.montante = m;
+
+            taxa.value = arredondar(i * 100);
+            montante.value = arredondar(m);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + J + i
+        // Descobrir t e M
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            j !== null &&
+            i !== null &&
+            tCampo === null
+        ) {
+
+            t = j / (c * i);
+            m = c + j;
+
+            memoria.tempo = t;
+            memoria.montante = m;
+
+            tempo.value = arredondar(t);
+            montante.value = arredondar(m);
+
+            return;
         }
 
     }
 
 
-    // =====================================================
-    // BOTÕES VERIFICAR
-    // =====================================================
+    // =================================================
+    // JUROS COMPOSTOS
+    // =================================================
 
-    const botoesVerificar =
-        document.querySelectorAll(".verificarQuestao");
+    else {
+
+        let c = memoria.capital;
+        let i = memoria.taxa;
+        let t = memoria.tempo;
+        let j = memoria.juros;
+        let m = memoria.montante;
 
 
-    botoesVerificar.forEach(function (botao) {
+        // ---------------------------------------------
+        // C + i + t
+        // Descobrir J e M
+        // ---------------------------------------------
 
-        botao.addEventListener("click", function () {
+        if (
+            cCampo !== null &&
+            iCampo !== null &&
+            tCampo !== null &&
+            jCampo === null &&
+            mCampo === null
+        ) {
 
-            const numero =
-                Number(botao.dataset.numero);
+            m = c * Math.pow(1 + i, t);
+            j = m - c;
 
-            verificarResposta(numero);
+            memoria.montante = m;
+            memoria.juros = j;
 
-        });
+            montante.value = arredondar(m);
+            juros.value = arredondar(j);
 
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // M + C
+        // Descobrir J
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            m !== null &&
+            jCampo === null
+        ) {
+
+            j = m - c;
+
+            memoria.juros = j;
+
+            juros.value = arredondar(j);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // J + i + t
+        // Descobrir C e M
+        // ---------------------------------------------
+
+        if (
+            cCampo === null &&
+            j !== null &&
+            i !== null &&
+            t !== null
+        ) {
+
+            c =
+                j /
+                (Math.pow(1 + i, t) - 1);
+
+            m =
+                c *
+                Math.pow(1 + i, t);
+
+            memoria.capital = c;
+            memoria.montante = m;
+
+            capital.value = arredondar(c);
+            montante.value = arredondar(m);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // M + i + t
+        // Descobrir C e J
+        // ---------------------------------------------
+
+        if (
+            cCampo === null &&
+            m !== null &&
+            i !== null &&
+            t !== null
+        ) {
+
+            c =
+                m /
+                Math.pow(1 + i, t);
+
+            j = m - c;
+
+            memoria.capital = c;
+            memoria.juros = j;
+
+            capital.value = arredondar(c);
+            juros.value = arredondar(j);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + M + t
+        // Descobrir i e J
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            m !== null &&
+            t !== null &&
+            iCampo === null
+        ) {
+
+            i =
+                Math.pow(m / c, 1 / t) - 1;
+
+            j = m - c;
+
+            memoria.taxa = i;
+            memoria.juros = j;
+
+            taxa.value = arredondar(i * 100);
+            juros.value = arredondar(j);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + M + i
+        // Descobrir t e J
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            m !== null &&
+            i !== null &&
+            tCampo === null
+        ) {
+
+            t =
+                Math.log(m / c) /
+                Math.log(1 + i);
+
+            j = m - c;
+
+            memoria.tempo = t;
+            memoria.juros = j;
+
+            tempo.value = arredondar(t);
+            juros.value = arredondar(j);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + J + i + t
+        // Descobrir M
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            j !== null &&
+            i !== null &&
+            t !== null &&
+            mCampo === null
+        ) {
+
+            m =
+                c *
+                Math.pow(1 + i, t);
+
+            memoria.montante = m;
+
+            montante.value = arredondar(m);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + J + t
+        // Descobrir i e M
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            j !== null &&
+            t !== null &&
+            iCampo === null
+        ) {
+
+            m = c + j;
+
+            i =
+                Math.pow(m / c, 1 / t) - 1;
+
+            memoria.montante = m;
+            memoria.taxa = i;
+
+            montante.value = arredondar(m);
+            taxa.value = arredondar(i * 100);
+
+            return;
+        }
+
+
+        // ---------------------------------------------
+        // C + J + i
+        // Descobrir t e M
+        // ---------------------------------------------
+
+        if (
+            c !== null &&
+            j !== null &&
+            i !== null &&
+            tCampo === null
+        ) {
+
+            m = c + j;
+
+            t =
+                Math.log(m / c) /
+                Math.log(1 + i);
+
+            memoria.montante = m;
+            memoria.tempo = t;
+
+            montante.value = arredondar(m);
+            tempo.value = arredondar(t);
+
+            return;
+        }
+
+    }
+
+});
+
+
+
+// =====================================================
+// QUESTIONÃRIO
+// =====================================================
+
+const botaoQuestoes = document.getElementById("questoes");
+const areaQuestionario = document.getElementById("areaQuestionario");
+const questoes = document.querySelectorAll(".questao");
+const botoesVerificar = document.querySelectorAll(".verificarQuestao");
+const botoesProxima = document.querySelectorAll(".proximaQuestao");
+const resultadoFinal = document.getElementById("resultadoFinal");
+const textoResultadoFinal = document.getElementById("textoResultadoFinal");
+const mensagemFinal = document.getElementById("mensagemFinal");
+const reiniciarQuestionario = document.getElementById("reiniciarQuestionario");
+const numeroQuestao = document.getElementById("numeroQuestao");
+
+let questaoAtual = 1;
+let acertos = 0;
+
+
+// =====================================================
+// ABRIR QUESTIONÃRIO
+// =====================================================
+
+botaoQuestoes.addEventListener("click", function () {
+
+    areaQuestionario.style.display = "block";
+
+    questaoAtual = 1;
+    acertos = 0;
+
+    resultadoFinal.style.display = "none";
+
+    questoes.forEach(function (questao) {
+        questao.classList.remove("ativa");
     });
 
+    document.querySelector('[data-questao="1"]').classList.add("ativa");
 
-    // =====================================================
-    // BOTÕES PRÓXIMA QUESTÃO
-    // =====================================================
+    numeroQuestao.textContent = "1";
 
-    const botoesProxima =
-        document.querySelectorAll(".proximaQuestao");
-
-
-    botoesProxima.forEach(function (botao) {
-
-        botao.addEventListener("click", function () {
-
-            const proxima =
-                Number(botao.dataset.proxima);
-
-
-            // -----------------------------------------
-            // SE TERMINOU
-            // -----------------------------------------
-
-            if (proxima === 11) {
-
-                mostrarResultadoFinal();
-
-                return;
-
-            }
-
-
-            // -----------------------------------------
-            // PRÓXIMA
-            // -----------------------------------------
-
-            questaoAtual = proxima;
-
-            mostrarQuestao(questaoAtual);
-
-        });
-
+    areaQuestionario.scrollIntoView({
+        behavior: "smooth"
     });
 
-
-    // =====================================================
-    // MOSTRAR QUESTIONÁRIO
-    // =====================================================
-
-    botaoQuestoes.addEventListener("click", function () {
-
-        areaQuestionario.style.display = "block";
-
-        resultadoFinal.style.display = "none";
-
-        mostrarQuestao(questaoAtual);
-
-        areaQuestionario.scrollIntoView({
-            behavior: "smooth"
-        });
-
-    });
+});
 
 
-    // =====================================================
-    // RESULTADO FINAL
-    // =====================================================
+// =====================================================
+// VERIFICAR RESPOSTA
+// =====================================================
 
-    function mostrarResultadoFinal() {
+botoesVerificar.forEach(function (botao) {
 
-        todasQuestoes.forEach(function (questao) {
+    botao.addEventListener("click", function () {
 
-            questao.classList.remove("ativa");
+        const numero = Number(botao.dataset.numero);
 
-        });
+        const questao = document.querySelector(
+            '[data-questao="' + numero + '"]'
+        );
 
+        const respostaSelecionada = questao.querySelector(
+            'input[name="q' + numero + '"]:checked'
+        );
 
-        areaQuestionario.style.display = "block";
+        const resultado = questao.querySelector(
+            "#resultadoQ" + numero
+        );
 
-        resultadoFinal.style.display = "block";
-
-
-        const porcentagem =
-            (acertos / 10) * 100;
-
-
-        textoResultadoFinal.innerHTML =
-            "Você acertou <strong>" +
-            acertos +
-            " de 10 questões</strong> na primeira tentativa.<br><br>" +
-            "Aproveitamento: <strong>" +
-            porcentagem +
-            "%</strong>.";
+        const proxima = questao.querySelector(".proximaQuestao");
 
 
-        if (acertos === 10) {
+        if (!respostaSelecionada) {
 
-            mensagemFinal.textContent =
-                "🏆 Excelente! Você acertou todas as questões!";
+            resultado.textContent =
+                "Selecione uma resposta.";
 
-        } else if (acertos >= 8) {
+            return;
+        }
 
-            mensagemFinal.textContent =
-                "👏 Muito bem! Parabéns pelo seu empenho!";
 
-        } else if (acertos >= 5) {
+        // Respostas corretas
+        const respostasCorretas = {
+            1: "b",
+            2: "b",
+            3: "b",
+            4: "b",
+            5: "b",
+            6: "b",
+            7: "b",
+            8: "b",
+            9: "b",
+            10: "c"
+        };
 
-            mensagemFinal.textContent =
-                "👍 Bom trabalho! Continue praticando e você vai melhorar cada vez mais!";
+
+        if (respostaSelecionada.value === respostasCorretas[numero]) {
+
+            resultado.textContent = "Resposta correta!";
+
+            acertos++;
 
         } else {
 
-            mensagemFinal.textContent =
-                "💪 Parabéns pelo seu empenho! Continue praticando. Você está aprendendo!";
+            resultado.textContent = "Resposta incorreta.";
 
         }
 
 
-        resultadoFinal.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
+        // Impede mudar a resposta depois da verificaÃ§Ã£o
+        questao.querySelectorAll(
+            'input[type="radio"]'
+        ).forEach(function (radio) {
+
+            radio.disabled = true;
+
         });
 
-    }
+
+        // Esconde o botÃ£o verificar
+        botao.style.display = "none";
+
+        // Mostra o botÃ£o prÃ³xima
+        proxima.style.display = "inline-block";
+
+    });
+
+});
 
 
-    // =====================================================
-    // REINICIAR QUESTIONÁRIO
-    // =====================================================
+// =====================================================
+// PRÃ“XIMA QUESTÃƒO
+// =====================================================
 
-    reiniciarQuestionario.addEventListener(
-        "click",
-        function () {
+botoesProxima.forEach(function (botao) {
 
-            acertos = 0;
+    botao.addEventListener("click", function () {
 
-            questaoAtual = 1;
+        const proxima = Number(botao.dataset.proxima);
 
-            primeiraResposta.clear();
-
-
-            // Limpa respostas
-            document
-                .querySelectorAll(
-                    '#areaQuestionario input[type="radio"]'
-                )
-                .forEach(function (input) {
-
-                    input.checked = false;
-
-                    input.disabled = false;
-
-                });
+        // Esconde questÃ£o atual
+        questoes.forEach(function (questao) {
+            questao.classList.remove("ativa");
+        });
 
 
-            // Limpa mensagens
-            document
-                .querySelectorAll(".resultadoQuestao")
-                .forEach(function (resultado) {
+        // Se ainda existem questÃµes
+        if (proxima <= 10) {
 
-                    resultado.textContent = "";
+            questaoAtual = proxima;
 
-                });
+            const novaQuestao = document.querySelector(
+                '[data-questao="' + proxima + '"]'
+            );
 
+            novaQuestao.classList.add("ativa");
 
-            // Mostra novamente os botões
-            document
-                .querySelectorAll(".verificarQuestao")
-                .forEach(function (botao) {
+            numeroQuestao.textContent = proxima;
 
-                    botao.style.display = "block";
-
-                });
-
-
-            // Esconde todos os botões próximos
-            document
-                .querySelectorAll(".proximaQuestao")
-                .forEach(function (botao) {
-
-                    botao.style.display = "none";
-
-                });
-
-
-            resultadoFinal.style.display = "none";
-
-
-            mostrarQuestao(1);
+            novaQuestao.scrollIntoView({
+                behavior: "smooth"
+            });
 
         }
-    );
+
+        // QuestionÃ¡rio terminou
+        else {
+
+            numeroQuestao.textContent = "10";
+
+            resultadoFinal.style.display = "block";
+
+            textoResultadoFinal.textContent =
+                "Você acertou " +
+                acertos +
+                " de 10 questÃµes.";
+
+            if (acertos === 10) {
+
+                mensagemFinal.textContent =
+                    " Parabéns! Você acertou todas as questes!";
+
+            } else if (acertos >= 7) {
+
+                mensagemFinal.textContent =
+                    " Muito bem! Você teve um timo resultado!";
+
+            } else if (acertos >= 5) {
+
+                mensagemFinal.textContent =
+                    "Bom trabalho! Continue estudando para melhorar ainda mais.";
+
+            } else {
+
+                mensagemFinal.textContent =
+                    " Continue estudando! Você pode tentar novamente.";
+
+            }
+
+            resultadoFinal.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+
+    });
+
+});
 
 
-    // =====================================================
-    // INÍCIO
-    // =====================================================
+// =====================================================
+// REFAZER QUESTIONÃRIO
+// =====================================================
 
-    todasQuestoes.forEach(function (questao) {
+reiniciarQuestionario.addEventListener("click", function () {
+
+    questaoAtual = 1;
+    acertos = 0;
+
+
+    // Limpa respostas
+    document.querySelectorAll(
+        '#areaQuestionario input[type="radio"]'
+    ).forEach(function (radio) {
+
+        radio.checked = false;
+        radio.disabled = false;
+
+    });
+
+
+    // Limpa resultados
+    document.querySelectorAll(
+        ".resultadoQuestao"
+    ).forEach(function (resultado) {
+
+        resultado.textContent = "";
+
+    });
+
+
+    // Esconde todos os botÃµes prÃ³xima
+    document.querySelectorAll(
+        ".proximaQuestao"
+    ).forEach(function (botao) {
+
+        botao.style.display = "none";
+
+    });
+
+
+    // Mostra todos os botÃµes verificar
+    document.querySelectorAll(
+        ".verificarQuestao"
+    ).forEach(function (botao) {
+
+        botao.style.display = "inline-block";
+
+    });
+
+
+    // Esconde resultado final
+    resultadoFinal.style.display = "none";
+
+
+    // Mostra questÃ£o 1
+    questoes.forEach(function (questao) {
 
         questao.classList.remove("ativa");
 
     });
+
+
+    document.querySelector(
+        '[data-questao="1"]'
+    ).classList.add("ativa");
+
+
+    numeroQuestao.textContent = "1";
+
+
+    areaQuestionario.scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+   
+
+
+// =====================================================
+// INFORMAÇÕES
+// =====================================================
+
+const botaoInfo = document.getElementById("info");
+const areaInformacoes = document.getElementById("areaInformacoes");
+
+botaoInfo.addEventListener("click", function () {
+
+    if (areaInformacoes.style.display === "none") {
+
+        areaInformacoes.style.display = "block";
+
+        areaInformacoes.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    } else {
+
+        areaInformacoes.style.display = "none";
+
+    }
 
 });
