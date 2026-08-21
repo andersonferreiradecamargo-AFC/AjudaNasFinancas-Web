@@ -1,4 +1,4 @@
-const capital = document.getElementById("capital");
+﻿const capital = document.getElementById("capital");
 const taxa = document.getElementById("taxa");
 const tempo = document.getElementById("tempo");
 const juros = document.getElementById("juros");
@@ -12,12 +12,12 @@ const compostos = document.getElementById("compostos");
 
 
 // =====================================================
-// PRECISÃƒO INTERNA
+// PRECISÃƒÆ’O INTERNA
 // =====================================================
 
-// Guarda o Ãºltimo resultado completo calculado.
+// Guarda o ÃƒÂºltimo resultado completo calculado.
 // O valor mostrado na tela pode estar arredondado,
-// mas o cÃ¡lculo seguinte pode usar o valor completo.
+// mas o cÃƒÂ¡lculo seguinte pode usar o valor completo.
 
 let memoria = {
     capital: null,
@@ -29,7 +29,7 @@ let memoria = {
 
 
 // =====================================================
-// FUNÃ‡ÃƒO PARA MOSTRAR RESULTADOS
+// FUNÃƒâ€¡ÃƒÆ’O PARA MOSTRAR RESULTADOS
 // =====================================================
 
 function arredondar(valor) {
@@ -38,7 +38,7 @@ function arredondar(valor) {
 
 
 // =====================================================
-// FUNÃ‡ÃƒO PARA IDENTIFICAR VALORES
+// FUNÃƒâ€¡ÃƒÆ’O PARA IDENTIFICAR VALORES
 // =====================================================
 
 function numero(campo) {
@@ -85,8 +85,8 @@ calcular.addEventListener("click", function () {
     const mCampo = numero(montante);
 
 // =================================================
-// ATUALIZA A MEMÃ“RIA
-// MantÃ©m a precisÃ£o completa dos resultados.
+// ATUALIZA A MEMÃƒâ€œRIA
+// MantÃƒÂ©m a precisÃƒÂ£o completa dos resultados.
 // =================================================
 
 function atualizarMemoria(valorCampo, valorMemoria, novoValor) {
@@ -95,9 +95,9 @@ function atualizarMemoria(valorCampo, valorMemoria, novoValor) {
         return valorMemoria;
     }
 
-    // Se o valor que estÃ¡ na tela Ã© exatamente o
+    // Se o valor que estÃƒÂ¡ na tela ÃƒÂ© exatamente o
     // resultado arredondado anteriormente pelo programa,
-    // mantÃ©m o valor interno completo.
+    // mantÃƒÂ©m o valor interno completo.
     if (
         valorMemoria !== null &&
         valorCampo === arredondar(valorMemoria)
@@ -568,7 +568,7 @@ memoria.montante =
 
 
 // =====================================================
-// QUESTIONÃRIO
+// QUESTIONÃƒÂRIO
 // =====================================================
 
 const botaoQuestoes = document.getElementById("questoes");
@@ -587,7 +587,7 @@ let acertos = 0;
 
 
 // =====================================================
-// ABRIR QUESTIONÃRIO
+// ABRIR QUESTIONÃƒÂRIO
 // =====================================================
 
 botaoQuestoes.addEventListener("click", function () {
@@ -676,7 +676,7 @@ botoesVerificar.forEach(function (botao) {
         }
 
 
-        // Impede mudar a resposta depois da verificaÃ§Ã£o
+        // Impede mudar a resposta depois da verificaÃƒÂ§ÃƒÂ£o
         questao.querySelectorAll(
             'input[type="radio"]'
         ).forEach(function (radio) {
@@ -686,10 +686,10 @@ botoesVerificar.forEach(function (botao) {
         });
 
 
-        // Esconde o botÃ£o verificar
+        // Esconde o botÃƒÂ£o verificar
         botao.style.display = "none";
 
-        // Mostra o botÃ£o prÃ³xima
+        // Mostra o botÃƒÂ£o prÃƒÂ³xima
         proxima.style.display = "inline-block";
 
     });
@@ -698,7 +698,7 @@ botoesVerificar.forEach(function (botao) {
 
 
 // =====================================================
-// PRÃ“XIMA QUESTÃƒO
+// PRÓXIMA QUESTÃO
 // =====================================================
 
 botoesProxima.forEach(function (botao) {
@@ -707,13 +707,13 @@ botoesProxima.forEach(function (botao) {
 
         const proxima = Number(botao.dataset.proxima);
 
-        // Esconde questÃ£o atual
+        // Esconde questão atual
         questoes.forEach(function (questao) {
             questao.classList.remove("ativa");
         });
 
 
-        // Se ainda existem questÃµes
+        // Se ainda existem questões
         if (proxima <= 10) {
 
             questaoAtual = proxima;
@@ -732,7 +732,7 @@ botoesProxima.forEach(function (botao) {
 
         }
 
-        // QuestionÃ¡rio terminou
+        // QuestionÃƒÂ¡rio terminou
         else {
 
             numeroQuestao.textContent = "10";
@@ -742,17 +742,17 @@ botoesProxima.forEach(function (botao) {
             textoResultadoFinal.textContent =
                 "Você acertou " +
                 acertos +
-                " de 10 questÃµes.";
+                " de 10 questões.";
 
             if (acertos === 10) {
 
                 mensagemFinal.textContent =
-                    " Parabéns! Você acertou todas as questes!";
+                    " Parabéns! Você acertou todas as questões!";
 
             } else if (acertos >= 7) {
 
                 mensagemFinal.textContent =
-                    " Muito bem! Você teve um timo resultado!";
+                    " Muito bem! Você teve um ótimo resultado!";
 
             } else if (acertos >= 5) {
 
@@ -778,7 +778,7 @@ botoesProxima.forEach(function (botao) {
 
 
 // =====================================================
-// REFAZER QUESTIONÃRIO
+// REFAZER QUESTIONÃƒÂRIO
 // =====================================================
 
 reiniciarQuestionario.addEventListener("click", function () {
@@ -808,7 +808,7 @@ reiniciarQuestionario.addEventListener("click", function () {
     });
 
 
-    // Esconde todos os botÃµes prÃ³xima
+    // Esconde todos os botÃƒÂµes prÃƒÂ³xima
     document.querySelectorAll(
         ".proximaQuestao"
     ).forEach(function (botao) {
@@ -818,7 +818,7 @@ reiniciarQuestionario.addEventListener("click", function () {
     });
 
 
-    // Mostra todos os botÃµes verificar
+    // Mostra todos os botÃƒÂµes verificar
     document.querySelectorAll(
         ".verificarQuestao"
     ).forEach(function (botao) {
@@ -832,7 +832,7 @@ reiniciarQuestionario.addEventListener("click", function () {
     resultadoFinal.style.display = "none";
 
 
-    // Mostra questÃ£o 1
+    // Mostra questão 1
     questoes.forEach(function (questao) {
 
         questao.classList.remove("ativa");
@@ -858,7 +858,7 @@ reiniciarQuestionario.addEventListener("click", function () {
 
 
 // =====================================================
-// INFORMAÇÕES
+// INFORMAÃ‡Ã•ES
 // =====================================================
 
 const botaoInfo = document.getElementById("info");
@@ -881,3 +881,6 @@ botaoInfo.addEventListener("click", function () {
     }
 
 });
+
+
+
